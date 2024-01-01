@@ -1,160 +1,80 @@
 class Node {
     constructor(value) {
         this.value = value;
-        this.prev = null;
-        this.next = null;
+        this.left = null;
+        this.right = null;
     }
 }
 
-class DoublyLinkedList {
+class BinarySearchTree {
     constructor() {
-        this.head = null;
-        this.tail = null;
-        this.length = 0;
+        this.root = null;
     }
 
-    push(value) {
+    insert(value) {
         let newNode = new Node(value);
-        if (this.length == 0) {
-            this.head = newNode;
-            this.tail = newNode;
-        }
-        else {
-            this.tail.next = newNode;
-            newNode.prev = this.tail;
-            this.tail = newNode;
-        }
-        this.length++;
-        return this;
-    }
-    pop() {
-        let popped = null;
-        if (this.length == 0) return popped;
-        else if (this.length == 1) {
-            popped = this.tail;
-            this.head = null;
-            this.tail = null;
-        }
-        else {
-            let popped = this.tail;
-            let newTail = popped.prev;
-            this.tail = newTail;
-            this.tail.next = null;
-        }
-        this.length--;
-        return popped;
-    }
-    unshift(value) {
-        let newNode = new Node(value);
-        if (this.length == 0) {
-            this.head = newNode;
-            this.tail = newNode;
-        }
-        else {
-            newNode.next = this.head;
-            this.head.prev = newNode;
-            this.head = newNode;
-        }
-        this.length++;
-        return this;
-    }
-    shift() {
-        let shifted = null;
-        if (this.length == 0) return shifted;
-        else if (this.length == 1) {
-            shifted = this.head;
-            this.head = null;
-            this.tail = null;
-        }
-        else {
-            let newHead = this.head;
-            this.head = newHead.next;
-            this.head.prev = null;
-            newHead.next = null;
-        }
-        this.length--;
-        return shifted;
-    }
-    get(position) {
-        let i, target;
-        if (position < 0 || position >= this.length) return null;
-        else if (position >= this.length / 2) {
-            i = this.length - 1;
-            target = this.tail;
-            while (i != position) {
-                target = target.prev;
-                i--;
+        if (!this.root) return this.root = newNode;
+        let current = this.root;
+        while (true) {
+            if (value === current.value) return `${value}already exists!`;
+            if (value > current.value) {
+                if (current.right) {
+                    current = current.right;
+                    continue;
+                }
+                current.right = newNode;
+                break;
+            }
+            else if (value < current.value) {
+                if (current.left) {
+                    current = current.left;
+                    continue;
+                }
+                current.left = newNode;
+                break;
             }
         }
-        else {
-            i = 0;
-            target = this.head;
-            while (i != position) {
-                target = target.next;
-                i++;
+        return this.root;
+    }
+    find(value) {
+        if (!this.root) return undefined;
+        let current = this.root;
+        while (current) {
+            if (value === current.value) return current;
+            if (value > current.value) {
+                current = current.right;
+            }
+            else {
+                current = current.left;
             }
         }
-        return target;
+        return "Value not found!";
     }
-    set(value, position) {
-        let target = this.get(position);
-        if (target) {
-            target.value = value;
-            return true;
+    breadthFirstSearch() {
+        let queue = [];
+        let visited = [];
+        let node = this.root;
+        queue.push(node);
+        while (queue.length !== 0) {
+            node = queue.shift();
+            visited.push(node.value);
+            if (node.left) queue.push(node.left);
+            if (node.right) queue.push(node.right);
         }
-        return false;
-    }
-    insert(value, position) {
-        if (position < 0 || position > this.length) return null;
-        else if (position === this.length) return this.push(value);
-        else if (position === 0) return this.unshift(value);
-
-        let newNode = new Node(value);
-        let next = this.get(position);
-        let prev = next.prev;
-        newNode.prev = prev;
-        prev.next = newNode;
-        newNode.next = next;
-        next.prev = newNode;
-
-        this.length++;
-        return this;
-    }
-    remove(position) {
-        if (position < 0 || position >= this.length) return null;
-        else if (position === this.length - 1) return this.pop();
-        else if (position === 0) return this.shift();
-
-        let target = this.get(position);
-        let prev = target.prev;
-        let next = target.next;
-        prev.next = next;
-        next.prev = prev;
-
-        this.length--;
-        return target;
-    }
-    reverse() {
-        let node = this.head;
-        this.head = this.tail;
-        this.tail = node;
-        let prev = null;
-        let next = null;
-        for (let i = 0; i < this.length; i++) {
-            next = node.next;
-            node.next = prev;
-            node.prev = next;
-            prev = node;
-            node = next;
-        }
-        return this;
+        return visited;
     }
 }
 
-let list = new DoublyLinkedList();
 
-list.push("A");
-list.push("B");
-list.push("C");
+let tree = new BinarySearchTree();
+tree.insert(10);
+tree.insert(5);
+tree.insert(14);
+tree.insert(3);
+tree.insert(12);
+tree.insert(7);
+tree.insert(17);
 
-console.log(list.reverse())
+// console.log(tree.find(12));
+// console.log(tree.find(20));
+console.log(tree.breadthFirstSearch());
