@@ -129,7 +129,7 @@ class SLL {
     }
 
     remove(position) {
-        if (position < 0 || position >= this.length) return null;
+        if (position < 0 || position >= this.length) return undefined;
         if (position === 0) return this.shift();
         if (position === this.length - 1) return this.pop();
         // find the node before target
@@ -142,6 +142,7 @@ class SLL {
         nodeBefore.next = nodeAfter;
 
         this.length--;
+        target.next = null;
         return target;
     }
 
@@ -162,14 +163,4 @@ class SLL {
     }
 }
 
-let nodeList = new SLL();
-nodeList.push("zero");
-nodeList.push("one");
-nodeList.push("two");
-nodeList.push("three");
-
-console.log(nodeList);
-console.log("-----------------");
-let removed = nodeList.remove(2);
-console.log(nodeList);
-console.log(removed);
+module.exports = SLL;
